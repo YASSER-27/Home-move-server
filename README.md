@@ -22,3 +22,4 @@
 3.  for music video /media/music video/your video music +cover same name
 4.  start server download here [MOVE](https://github.com/YASSER-27/Home-move-server/releases/download/v1/Moves.exe)) or download all projet here[all projet](https://github.com/YASSER-27/Home-move-server/releases/download/v1/MOVE.zip)
 make sure you run move.exe or move.py in same folder 
+5.  for watch from phone or pc in same network add (your ip +:5000) 
