@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YASSER Movies</title>
+    
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('selectedTheme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <style>
+        :root { 
+            --red: #e50914; --bg: #141414; --card-bg: #222; --text: #ffffff;
+            --nav-bg: rgba(0,0,0,0.95); --border: #333; --header-line: #ffffff;
+            --hover-color: #ffffff;
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff; --card-bg: #f3f3f1; --text: #1e2321;
+            --nav-bg: rgba(255, 255, 255, 0.95); --border: #e0e2d9; 
+            --header-line: #1e2321; --hover-color: #00ec5e;
+        }
+
+        body { 
+            background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; 
+            margin: 0; transition: background 0.15s, color 0.15s; overflow-x: hidden; 
+        }
+        
+        /* Nav */
+        .nav { width: 100%; padding: 10px 5%; background: var(--nav-bg); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .logo-text { color: var(--red); font-size: 26px; font-weight: bold; text-decoration: none; position: absolute; left: 50%; transform: translateX(-50%); }
+        
+        .dropdown { position: relative; }
+        .dropbtn { background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .dropdown-content { display: none; position: absolute; right: 0; background: var(--card-bg); min-width: 160px; border-radius: 8px; border: 1px solid var(--border); z-index: 1001; }
+        .dropdown-content a { color: var(--text); padding: 10px; text-decoration: none; display: block; text-align: right; }
+        .dropdown-content a:hover { background: var(--red); color: white; }
+
+        /* Grid */
+        section { padding: 30px 4%; }
+        .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; border: 1px solid transparent; cursor: pointer; text-align: center; }
+        .card:hover { transform: translateY(-5px); border-color: white; box-shadow: 0 0 10px white; }
+        .card img { width: 100%; height: 240px; object-fit: cover; }
+        .card-info { padding: 8px; font-size: 13px; }
+
+        /* Player Layout */
+        #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 10000; flex-direction: column; }
+        .player-header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; background: #000; border-bottom: 1px solid #222; height: 70px; box-sizing: border-box; }
+        
+        .main-player-container { display: flex; flex-direction: row; width: 100%; height: calc(100vh - 70px); overflow: hidden; }
+        
+        /* Video Side */
+        .video-side { flex: 3; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #000; padding: 20px; position: relative; transition: all 0.4s ease; }
+        .video-box { width: 100%; max-width: 1000px; aspect-ratio: 16/9; }
+        
+        /* Sidebar Recommendations */
+        .sidebar-recs { 
+            width: 0; /* مخفي افتراضياً */
+            background: #080808; 
+            border-right: 0 solid #222; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 0; 
+            overflow: hidden; 
+            transition: all 0.4s ease; 
+            opacity: 0;
+        }
+        .sidebar-recs.open { width: 350px; padding: 15px; border-right: 1px solid #222; opacity: 1; }
+        
+        .sidebar-title { color: #aaa; font-size: 14px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; white-space: nowrap; }
+        .rec-item-side { display: flex; gap: 10px; cursor: pointer; transition: 0.2s; padding: 8px; border-radius: 5px; margin-bottom: 5px; }
+        .rec-item-side:hover { background: #222; }
+        .rec-item-side img { width: 110px; height: 65px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+        .rec-item-name { font-size: 12px; color: #fff; font-weight: bold; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Icon TV Button */
+        #tv-toggle-btn { display: none; margin-right: 15px; color: #fff; font-size: 22px; cursor: pointer; transition: 0.3s; }
+        #tv-toggle-btn:hover { color: var(--red); transform: scale(1.1); }
+
+        /* Series Bottom Episodes */
+        .bottom-eps { position: absolute; bottom: 20px; width: 90%; display: none; gap: 10px; overflow-x: auto; padding: 10px; }
+        .ep-btn-netflix { flex: 0 0 auto; padding: 8px 15px; background: #222; border: 1px solid #444; color: #fff; cursor: pointer; border-radius: 4px; }
+        .ep-btn-netflix.active { background: var(--red); }
+
+        @media (max-width: 900px) {
+            .main-player-container { flex-direction: column; overflow-y: auto; }
+            .sidebar-recs.open { width: 100%; height: auto; border-right: none; border-top: 1px solid #222; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav">
+    <div class="right-tools">
+        <div class="dropdown">
+            <button class="dropbtn" id="dropBtn"><i class="fab fa-ethereum"></i></button>
+            <div class="dropdown-content" id="dropContent">
+                <a href="#movies">الأفلام</a>
+                <a href="#series">المسلسلات</a>
+                <a href="#music">الموسيقى</a>
+            </div>
+        </div>
+        <div class="theme-switch" onclick="toggleTheme()"><i id="theme-icon" class="fas fa-moon"></i></div>
+    </div>
+    <a href="/" class="logo-text">YASSER</a>
+    <div style="width: 80px;"></div>
+</div>
+
+{% if not is_view %}
+    <section id="movies">
+        <h2>أفلام</h2>
+        <div class="grid">
+            {% for film in media.films %}
+            <div class="card" onclick="playVideo('/stream/films/{{ film.file }}', '{{ film.title }}', '', 'movies', '')">
+                <img src="/stream/{{ film.cover }}"><div class="card-info">{{ film.title }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="series">
+        <h2>مسلسلات وأنيمشن</h2>
+        <div class="grid">
+            {% for s in media.series + media.anime %}
+            <div class="card" onclick="location.href='/view/{{ 'series' if s in media.series else 'anime' }}/{{ s.title }}'">
+                <img src="/stream/{{ s.cover }}"><div class="card-info">{{ s.title }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="music">
+        <h2>كليبات موسيقية</h2>
+        <div class="grid">
+            {% for m in media.music %}
+            <div class="card" onclick="playVideo('/stream/music/{{ m.file }}', '{{ m.title }}', '', 'music', '')">
+                <img src="/stream/{{ m.cover }}"><div class="card-info">{{ m.title }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% else %}
+    <section>
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img src="/stream/{{ cover }}" style="width: 150px; border-radius: 12px; border: 2px solid white;">
+            <h2>{{ folder }}</h2>
+        </div>
+        <div class="grid">
+            {% for ep in episodes %}
+            <div class="card" onclick="playVideo('/stream/{{ category }}/{{ folder }}/s1/{{ ep }}', '{{ ep }}', '{{ cover }}', '{{ category }}', '{{ folder }}')">
+                <img src="/stream/{{ cover }}"><div class="card-info">الحلقة {{ loop.index }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+<div id="player-overlay">
+    <div class="player-header">
+        <div style="display: flex; align-items: center;">
+            <button class="dropbtn" onclick="closePlayer()"><i class="fas fa-arrow-right"></i></button>
+            <i id="tv-toggle-btn" class="fas fa-tv" title="عرض الاقتراحات" onclick="toggleSidebar()"></i>
+        </div>
+        <span id="video-title" style="font-weight: bold; flex-grow: 1; text-align: center; margin-right: 40px;"></span>
+        <a href="/" style="color:white; font-size: 20px;"><i class="fas fa-home"></i></a>
+    </div>
+
+    <div class="main-player-container">
+        <div id="sidebarRecs" class="sidebar-recs">
+            <div class="sidebar-title">اقتراحات <i class="fas fa-magic"></i></div>
+            <div id="side-rec-list"></div>
+        </div>
+
+        <div class="video-side">
+            <div id="videoBox" class="video-box">
+                <video id="player" playsinline controls preload="none">
+                    <source src="" type="video/mp4" />
+                </video>
+            </div>
+            <div id="netflix-ep-list" class="bottom-eps"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script>
+    const player = new Plyr('#player', { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'fullscreen'] });
+
+    function playVideo(url, title, cover, category, folder) {
+        document.getElementById('player-overlay').style.display = 'flex';
+        document.getElementById('video-title').innerText = title;
+        
+        const sideRecs = document.getElementById('sidebarRecs');
+        const epList = document.getElementById('netflix-ep-list');
+        const videoBox = document.getElementById('videoBox');
+        const tvBtn = document.getElementById('tv-toggle-btn');
+
+        // Reset sidebar state
+        sideRecs.classList.remove('open');
+        epList.style.display = 'none';
+        tvBtn.style.display = 'none';
+
+        if (category === 'movies' || category === 'music') {
+            tvBtn.style.display = 'block';
+            videoBox.style.maxWidth = "1000px";
+            loadSidebarRecs(category);
+        } else {
+            videoBox.style.maxWidth = "100%";
+            epList.style.display = 'flex';
+            loadEpisodes(category, folder || title, url, cover);
+        }
+
+        player.source = { type: 'video', sources: [{ src: url, type: 'video/mp4' }] };
+        player.play();
+    }
+
+    function toggleSidebar() {
+        const sideRecs = document.getElementById('sidebarRecs');
+        sideRecs.classList.toggle('open');
+    }
+
+    function loadSidebarRecs(category) {
+        const list = document.getElementById('side-rec-list');
+        list.innerHTML = "";
+        const allCards = Array.from(document.querySelectorAll(`#${category} .card`));
+        const shuffled = allCards.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+        shuffled.forEach(card => {
+            const img = card.querySelector('img').src;
+            const name = card.querySelector('.card-info').innerText;
+            const action = card.getAttribute('onclick');
+            
+            const div = document.createElement('div');
+            div.className = 'rec-item-side';
+            div.setAttribute('onclick', action);
+            div.innerHTML = `<img src="${img}"><div class="rec-item-name">${name}</div>`;
+            list.appendChild(div);
+        });
+    }
+
+    function loadEpisodes(cat, folder, currentUrl, cover) {
+        fetch(`/api/episodes/${cat}/${folder}`).then(res => res.json()).then(data => {
+            const list = document.getElementById('netflix-ep-list');
+            list.innerHTML = "";
+            data.episodes.forEach((ep, i) => {
+                const active = currentUrl.includes(ep) ? 'active' : '';
+                list.innerHTML += `<button class="ep-btn-netflix ${active}" onclick="playVideo('/stream/${cat}/${folder}/s1/${ep}', '${ep}', '${cover}', '${cat}', '${folder}')">حلقة ${i+1}</button>`;
+            });
+        });
+    }
+
+    function closePlayer() {
+        player.stop();
+        player.source = { type: 'video', sources: [] };
+        document.getElementById('player-overlay').style.display = 'none';
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('selectedTheme', next);
+        document.getElementById('theme-icon').className = next === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    document.getElementById('dropBtn').onclick = (e) => {
+        e.stopPropagation();
+        const content = document.getElementById('dropContent');
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    };
+    window.onclick = () => document.getElementById('dropContent').style.display = 'none';
+</script>
+</body>
+</html>

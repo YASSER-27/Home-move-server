@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ folder }} - YASSER TIME</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        :root { --bg: #141414; --text: #ffffff; --card-bg: #222; --border: #333; --red: #e50914; }
+        [data-theme="light"] { --bg: #ffffff; --text: #141414; --card-bg: #f0f0f0; --border: #ccc; }
+
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px 5%; transition: 0.3s; }
+        
+        /* تصميم البوستر العلوي المعتدل */
+        .show-header { text-align: center; margin-bottom: 40px; }
+        .main-cover { width: 200px; height: 280px; object-fit: cover; border-radius: 15px; border: 3px solid var(--text); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        
+        h1 { margin-top: 15px; border-right: 5px solid var(--text); padding-right: 15px; display: inline-block; }
+
+        /* الشبكة 7 أعمدة */
+        .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
+        .ep-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); transition: 0.3s; }
+        .ep-card:hover { border-color: var(--text); transform: translateY(-5px); }
+        .ep-card img { width: 100%; height: 240px; object-fit: cover; }
+        .ep-info { padding: 10px; text-align: center; font-weight: bold; }
+
+        /* المشغل */
+        #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; }
+        .video-wrapper { width: 100%; max-width: 900px; margin: 50px auto 0; }
+        .close-controls { position: absolute; top: 15px; left: 20px; right: 20px; display: flex; justify-content: space-between; z-index: 10; }
+        .p-btn { background: rgba(255,255,255,0.2); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; line-height: 45px; text-align: center; text-decoration: none; }
+
+        @media (max-width: 1200px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="show-header">
+        <a href="/" style="float: right; color: var(--text); text-decoration: none;"><i class="fas fa-arrow-right"></i> عودة</a>
+        <br>
+        <img src="/stream/{{ cover }}" class="main-cover">
+        <br>
+        <h1>{{ folder }}</h1>
+    </div>
+
+    <div class="grid">
+        {% for ep in episodes %}
+        <div class="ep-card" onclick="playVideo('/stream/{{category}}/{{folder}}/s1/{{ep}}')">
+            <img src="/stream/{{ cover }}">
+            <div class="ep-info">الحلقة {{ loop.index }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="player-overlay">
+        <div class="close-controls">
+            <button class="p-btn" onclick="closePlayer()">✕</button>
+            <a href="/" class="p-btn"><i class="fas fa-house"></i></a> </div>
+        <div class="video-wrapper">
+            <video id="player" playsinline controls><source src="" type="video/mp4" /></video>
+        </div>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script>
+        const player = new Plyr('#player', { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'fullscreen'] });
+        function playVideo(url) {
+            document.getElementById('player-overlay').style.display = 'block';
+            player.source = { type: 'video', sources: [{ src: url, type: 'video/mp4' }] };
+            player.play();
+        }
+        function closePlayer() { player.stop(); document.getElementById('player-overlay').style.display = 'none'; }
+    </script>
+</body>
+</html>
