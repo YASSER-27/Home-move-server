@@ -1,7 +1,7 @@
 <div align="center">
     <img src="exemple/icon.png" width="250" />
     <h1>FILM</h1>
-    <p>HOME CINEMA Offline</p>
+    <p>HOME CINEMA Offline 2.0.0</p>
 </div>
 
 <p align="center">
@@ -76,6 +76,7 @@ Home-move-server-main/
 
 ### Author
 **YASSER-27** - [GitHub](https://github.com/YASSER-27/) 
+
 
 
 
