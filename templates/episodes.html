@@ -2,75 +2,202 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>{{ folder }} - YASSER TIME</title>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{ folder }} - YASSER MOVLEX</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --bg: #141414; --text: #ffffff; --card-bg: #222; --border: #333; --red: #e50914; }
-        [data-theme="light"] { --bg: #ffffff; --text: #141414; --card-bg: #f0f0f0; --border: #ccc; }
+        :root { 
+            --bg-base: #030303;
+            --bg-container: #080808;
+            --accent-purple: #7042f8; 
+            --accent-sunset: #ff4d4d;
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.45);
+            --border-raycast: rgba(255, 255, 255, 0.06);
+            --glass-effect: rgba(12, 12, 12, 0.7);
+            --raycast-glow: 0px 0px 40px 10px rgba(112, 66, 248, 0.12);
+            --card-radius: 22px;
+        }
 
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px 5%; transition: 0.3s; }
+        body { 
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 50% -10%, rgba(112, 66, 248, 0.18), transparent 70%),
+                radial-gradient(circle at 0% 100%, rgba(255, 77, 77, 0.08), transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(112, 66, 248, 0.05), transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navbar */
+        .nav { 
+            width: 100%; padding: 18px 6%; 
+            background: var(--glass-effect); 
+            position: sticky; top: 0; z-index: 1000; 
+            backdrop-filter: blur(80px); -webkit-backdrop-filter: blur(80px);
+            border-bottom: 1px solid var(--border-raycast); 
+            display: flex; justify-content: space-between; align-items: center; 
+            box-sizing: border-box; 
+        }
+
+        .logo-text { 
+            color: var(--text-main); font-size: 22px; font-weight: 800; 
+            letter-spacing: -1.2px; text-decoration: none; 
+            background: linear-gradient(135deg, #fff 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Header Section */
+        .show-header { 
+            text-align: center; 
+            padding: 60px 6% 40px;
+        }
+        .main-cover-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .main-cover { 
+            width: 180px; height: 260px; 
+            object-fit: cover; 
+            border-radius: 28px; 
+            border: 1px solid var(--accent-purple);
+            box-shadow: var(--raycast-glow);
+        }
+        .season-tag {
+            position: absolute; bottom: -10px; right: -10px;
+            background: var(--accent-purple); color: white;
+            padding: 6px 15px; border-radius: 12px;
+            font-size: 11px; font-weight: 800;
+        }
         
-        /* تصميم البوستر العلوي المعتدل */
-        .show-header { text-align: center; margin-bottom: 40px; }
-        .main-cover { width: 200px; height: 280px; object-fit: cover; border-radius: 15px; border: 3px solid var(--text); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        
-        h1 { margin-top: 15px; border-right: 5px solid var(--text); padding-right: 15px; display: inline-block; }
+        h1 { 
+            font-size: 32px; font-weight: 800; letter-spacing: -1px; margin: 0;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
 
-        /* الشبكة 7 أعمدة */
-        .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
-        .ep-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); transition: 0.3s; }
-        .ep-card:hover { border-color: var(--text); transform: translateY(-5px); }
-        .ep-card img { width: 100%; height: 240px; object-fit: cover; }
-        .ep-info { padding: 10px; text-align: center; font-weight: bold; }
+        /* Grid System */
+        section { padding: 40px 6%; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 25px; 
+        }
 
-        /* المشغل */
-        #player-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; }
-        .video-wrapper { width: 100%; max-width: 900px; margin: 50px auto 0; }
-        .close-controls { position: absolute; top: 15px; left: 20px; right: 20px; display: flex; justify-content: space-between; z-index: 10; }
-        .p-btn { background: rgba(255,255,255,0.2); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; line-height: 45px; text-align: center; text-decoration: none; }
+        .card { 
+            background: rgba(255, 255, 255, 0.02); 
+            border-radius: var(--card-radius); 
+            overflow: hidden; 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            border: 1px solid var(--border-raycast); 
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        .card:hover { 
+            transform: translateY(-10px); 
+            border-color: var(--accent-purple); 
+            box-shadow: var(--raycast-glow);
+        }
+        .card img { width: 100%; height: 240px; object-fit: cover; opacity: 0.8; transition: 0.5s; }
+        .card:hover img { opacity: 1; transform: scale(1.05); }
+        .card-info { 
+            padding: 15px; text-align: center; font-weight: 700; font-size: 14px;
+            background: rgba(255,255,255,0.03);
+        }
 
-        @media (max-width: 1200px) { .grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        /* Player Overlay */
+        #player-overlay { 
+            display: none; position: fixed; inset: 0; background: #000; z-index: 20000; 
+            flex-direction: column;
+            background-image: radial-gradient(circle at center, rgba(112, 66, 248, 0.15) 0%, #000 100%);
+        }
+        .player-nav {
+            height: 70px; padding: 0 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(8,8,8,0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-raycast);
+        }
+        .artplayer-app { flex: 1; width: 100%; height: 100%; }
+        .p-btn { 
+            background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border-raycast);
+            width: 40px; height: 40px; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .p-btn:hover { background: var(--accent-sunset); border-color: var(--accent-sunset); }
     </style>
 </head>
-<body data-theme="dark">
+<body>
+
+    <div class="nav">
+        <a href="/" class="logo-text">YASSER MOVLEX</a>
+        <a href="/" style="color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 700;">
+            <i class="fas fa-chevron-left"></i> العودة للرئيسية
+        </a>
+    </div>
 
     <div class="show-header">
-        <a href="/" style="float: right; color: var(--text); text-decoration: none;"><i class="fas fa-arrow-right"></i> عودة</a>
-        <br>
-        <img src="/stream/{{ cover }}" class="main-cover">
-        <br>
+        <div class="main-cover-wrapper">
+            <img src="/stream/{{ cover }}" class="main-cover">
+            <div class="season-tag">SEASON 1</div>
+        </div>
         <h1>{{ folder }}</h1>
     </div>
 
-    <div class="grid">
-        {% for ep in episodes %}
-        <div class="ep-card" onclick="playVideo('/stream/{{category}}/{{folder}}/s1/{{ep}}')">
-            <img src="/stream/{{ cover }}">
-            <div class="ep-info">الحلقة {{ loop.index }}</div>
+    <section>
+        <div class="grid">
+            {% for ep in episodes %}
+            <div class="card" onclick="playVideo('/stream/{{category}}/{{folder}}/s1/{{ep}}', 'الحلقة {{ loop.index }}')">
+                <img src="/stream/{{ cover }}">
+                <div class="card-info">الحلقة {{ loop.index }}</div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    </section>
 
     <div id="player-overlay">
-        <div class="close-controls">
-            <button class="p-btn" onclick="closePlayer()">✕</button>
-            <a href="/" class="p-btn"><i class="fas fa-house"></i></a> </div>
-        <div class="video-wrapper">
-            <video id="player" playsinline controls><source src="" type="video/mp4" /></video>
+        <div class="player-nav">
+            <button class="p-btn" onclick="closePlayer()"><i class="fas fa-xmark"></i></button>
+            <span id="current-ep-title" style="font-weight: 800; color: var(--accent-purple); font-size: 14px; letter-spacing: 1px;"></span>
+            <a href="/" class="p-btn"><i class="fas fa-house"></i></a>
         </div>
+        <div class="artplayer-app"></div>
     </div>
 
-    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
     <script>
-        const player = new Plyr('#player', { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'fullscreen'] });
-        function playVideo(url) {
-            document.getElementById('player-overlay').style.display = 'block';
-            player.source = { type: 'video', sources: [{ src: url, type: 'video/mp4' }] };
-            player.play();
+        let art;
+        function playVideo(url, title) {
+            document.getElementById('player-overlay').style.display = 'flex';
+            document.getElementById('current-ep-title').innerText = title.toUpperCase();
+            
+            if (art) art.destroy();
+            art = new Artplayer({
+                container: '.artplayer-app',
+                url: url,
+                title: title,
+                autoplay: true,
+                fullscreen: true,
+                theme: '#7042f8',
+                lang: 'ar',
+                icons: {
+                    loading: '<i class="fas fa-spinner fa-spin fa-2x" style="color:#7042f8"></i>',
+                    state: '<i class="fas fa-play fa-3x" style="color:#7042f8"></i>',
+                },
+            });
         }
-        function closePlayer() { player.stop(); document.getElementById('player-overlay').style.display = 'none'; }
+
+        function closePlayer() {
+            if (art) art.pause();
+            document.getElementById('player-overlay').style.display = 'none';
+        }
     </script>
 </body>
 </html>
