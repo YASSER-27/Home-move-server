@@ -19,16 +19,9 @@
 | ![exemple/YassirSnap_1773274651107.png](exemple/YassirSnap_1773274651107.png) | ![exemple/YassirSnap_1773274647089.png](exemple/YassirSnap_1773274647089.png) |
 | ![exemple/YassirSnap_1773274635139.png](exemple/YassirSnap_1773274635139.png) | ![exemple/YassirSnap_1773274659210.png](exemple/YassirSnap_1773274659210.png) |
 
----
 
-<div align='center'>
+![exemple/YassirSnap_1773274659210.png](exemple/YassirSnap_1773274603815.png)
 
-<img src='exemple/YassirSnap_1773274603815.png' width='800' style='margin:10px;'/>
-<img 
-
-</div>
-
----
 
 | Image | Image |
 |---|---|
@@ -42,7 +35,7 @@
 ## ROOT
 
 ```bash
-PROJECT_ROOT: Home-move-server-main/
+Home-move-server-main/
 ├── MOVE OFFLINE.exe
 ├── media
 │   ├── anime
@@ -80,6 +73,9 @@ PROJECT_ROOT: Home-move-server-main/
 > 2.  for series /media/series/your name folder/s1/ episode + cover same name
 > 3.  for music video /media/music video/your video music +cover same name
 > 4.  for watch from phone or pc or tv same network add (Host)
+
+### Author
+**YASSER-27** - [GitHub](https://github.com/YASSER-27/) 
 
 
 
